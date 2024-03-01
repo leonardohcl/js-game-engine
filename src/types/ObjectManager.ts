@@ -1,35 +1,20 @@
 import GameObject from "./GameObject";
 
 export default class ObjectManager {
-  private static instance: ObjectManager;
-  private _wrapper: HTMLElement;
-  private _objects: GameObject[] = [];
+  static id: string = "game";
+  static wrapper: Element;
+  static objects: GameObject[] = [];
 
-  constructor() {
-    this._wrapper = document.createElement("div");
-    this._wrapper.id = "game";
-    document.body.appendChild(this._wrapper);
-  }
+  private constructor() {}
 
-  get wrapper() {
-    return this._wrapper;
-  }
-
-  get objects() {
-    return this._objects;
-  }
-
-  static getInstance(): ObjectManager {
-    if (!ObjectManager.instance) {
-      ObjectManager.instance = new ObjectManager();
-    }
-
-    return ObjectManager.instance;
+  static boot() {
+    const existing = document.querySelector(`#${ObjectManager.id}`);
+    this.wrapper = existing || document.createElement("div");
+    if (!existing) this.wrapper.id = ObjectManager.id;
   }
 
   static addObject(obj: GameObject) {
-    const manager = ObjectManager.getInstance();
-    manager.objects.push(obj);
-    manager.wrapper.appendChild(obj.element);
+    ObjectManager.objects.push(obj);
+    ObjectManager.wrapper.appendChild(obj.element);
   }
 }

@@ -1,63 +1,52 @@
 import ObjectManager from "./ObjectManager";
 
 export default class TimeEngine {
-  private static instance: TimeEngine;
+  private static lastTimestamp: number = 0;
+  private static currentTimestamp: number = 0;
+  private static deltaTime: number = 0;
+  private static isPaused: boolean = true;
+  private static framesPerSecond: number;
+  private static frameTime: number;
+  private static frameTimeCooldown: number;
 
-  private lastTimestamp: number = 0;
-  private currentTimestamp: number = 0;
-  private deltaTime: number = 0;
-  private isPaused: boolean = true;
-  private framesPerSecond: number;
-  private frameTime: number;
-  private frameTimeCooldown: number;
+  private static processMillisecondsDelay: number = 10;
 
-  private processMillisecondsDelay: number = 10;
-  private objManager: ObjectManager = ObjectManager.getInstance();
-
-  constructor(maxfps = 30) {
-    this.framesPerSecond = maxfps;
-    this.frameTime = 1000 / this.framesPerSecond;
-    this.frameTimeCooldown = this.frameTime
+  private constructor(maxfps = 30) {
+    TimeEngine.framesPerSecond = maxfps;
+    TimeEngine.frameTime = 1000 / TimeEngine.framesPerSecond;
+    TimeEngine.frameTimeCooldown = TimeEngine.frameTime;
   }
 
-  private updateTimestamp() {
+  private static updateTimestamp() {
     const timestamp = new Date().getTime();
-    this.lastTimestamp = this.currentTimestamp || timestamp;
-    this.currentTimestamp = timestamp;
-    this.deltaTime = this.currentTimestamp - this.lastTimestamp;
+    TimeEngine.lastTimestamp = this.currentTimestamp || timestamp;
+    TimeEngine.currentTimestamp = timestamp;
+    TimeEngine.deltaTime = this.currentTimestamp - this.lastTimestamp;
   }
 
-  private process() {
+  private static process() {
     if (this.isPaused) return;
     this.updateTimestamp();
     this.frameTimeCooldown -= this.deltaTime;
-    const isOnFrameCooldown = this.frameTimeCooldown > 0
+    const isOnFrameCooldown = this.frameTimeCooldown > 0;
 
-    if (!isOnFrameCooldown ){
+    if (!isOnFrameCooldown) {
       this.frameTimeCooldown = this.frameTime - this.frameTimeCooldown;
-      this.objManager.objects.forEach((obj) => {
+      ObjectManager.objects.forEach((obj) => {
         obj.process(this.deltaTime);
         obj.updateRender();
       });
     }
-  
+
     setTimeout(() => this.process(), this.processMillisecondsDelay);
   }
 
-  static getInstance(): TimeEngine {
-    if (!TimeEngine.instance) {
-      TimeEngine.instance = new TimeEngine();
-    }
-
-    return TimeEngine.instance;
+  static start() {
+    TimeEngine.isPaused = false;
+    TimeEngine.process();
   }
 
-  start() {
-    this.isPaused = false;
-    this.process();
-  }
-
-  stop() {
+  static stop() {
     this.isPaused = true;
   }
 }

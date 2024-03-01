@@ -29,8 +29,7 @@ class Test extends GameObject {
   }
 }
 
-const game = new Game();
-
+Game.boot();
 const amount = 25;
 
 for (let i = 0; i < amount; i++) {
@@ -41,5 +40,5 @@ for (let i = 0; i < amount; i++) {
   obj.setSize("20px", "20px");
 }
 
-game.engine.start();
-setTimeout(() => game.engine.stop(), 5000);
+Game.start();
+setTimeout(() => Game.stop(), 5000);
