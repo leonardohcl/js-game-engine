@@ -1,11 +1,11 @@
 import ObjectManager from "./ObjectManager";
+import Reactive from "./Reactive";
 
 export default class GameObject {
-  x: number = 0;
-  y: number = 0;
-  width?: string;
-  height?: string;
+  x = new Reactive<number>(0);
+  y = new Reactive<number>(0);
   private tag: string;
+  private isRenderUpdated = false;
   private classname?: string;
   private _element!: HTMLElement;
 
@@ -24,9 +24,17 @@ export default class GameObject {
   }
 
   init() {
-    this._element = this._render();
+    this._element = this.render();
     this.updateRender();
+
+    this.x.subscribe(() => this.setRenderUpdated());
+    this.y.subscribe(() => this.setRenderUpdated());
+
     ObjectManager.addObject(this);
+  }
+
+  private setRenderUpdated(value = true) {
+    this.isRenderUpdated = value;
   }
 
   get element() {
@@ -34,28 +42,21 @@ export default class GameObject {
   }
 
   get transform() {
-    return `translate(${this.x}px, ${this.y}px)`;
+    return `translate(${this.x.value}px, ${this.y.value}px)`;
   }
 
   get style() {
     return {
-      width: this.width,
-      height: this.height,
       transform: this.transform,
     };
   }
 
-  setSize(width: string, height: string) {
-    this.width = width;
-    this.height = height;
-  }
-
   setPosition(x: number, y: number) {
-    this.x = x;
-    this.y = y;
+    this.x.value = x;
+    this.y.value = y;
   }
 
-  updateRender() {
+  private updateRender() {
     const css = Object.entries(this.style)
       .map((set) => {
         const [key, value] = set;
@@ -63,14 +64,17 @@ export default class GameObject {
       })
       .join("");
     this._element.style.cssText = css;
+    this.setRenderUpdated(false);
   }
 
-  _render() {
+  protected render() {
     const el = document.createElement(this.tag);
     el.classList.add("game-object");
     if (this.classname) el.classList.add(this.classname);
     return el;
   }
 
-  process(_: number) {}
+  process(_: number) {
+    if (this.isRenderUpdated) this.updateRender();
+  }
 }

@@ -2,6 +2,12 @@ import "./styles/main.scss";
 
 import Game from "./types/Game";
 import GameObject from "./types/GameObject";
+import Reactive from "./types/Reactive";
+import Random from "./utils/Random";
+
+const STEP_SIZE = 10;
+const POSITION_SQUARE_SIZE = 500;
+const POSITION_SQUARE_OFFSET = 100;
 
 class Test extends GameObject {
   value: number;
@@ -13,32 +19,37 @@ class Test extends GameObject {
 
   process(delta: number): void {
     super.process(delta);
-    const vertical =
-      Math.ceil(Math.random() * 8) * (Math.random() > 0.5 ? 1 : -1);
-    const horizontal =
-      Math.ceil(Math.random() * 8) * (Math.random() > 0.5 ? 1 : -1);
-    this.y += vertical;
-    this.x += horizontal;
+    if (Random.number() < 0.9) return;
+
+    const vertical = Random.integerRange(-STEP_SIZE, STEP_SIZE);
+    const horizontal = Random.integerRange(-STEP_SIZE, STEP_SIZE);
+    this.y.value! += vertical;
+    this.x.value! += horizontal;
   }
 
-  _render() {
-    const el = super._render();
+  render() {
+    const el = super.render();
     el.classList.add("test-object");
-    el.innerHTML = this.value?.toString();
+    // el.innerHTML = this.value?.toString();
     return el;
   }
 }
 
-Game.boot();
-const amount = 25;
+const amount: Reactive<number> = new Reactive<number>();
+amount.value = 100;
 
-for (let i = 0; i < amount; i++) {
+for (let i = 0; i < amount.value; i++) {
   const obj = new Test(i);
-  const x = 100 + Math.ceil(Math.random() * 200);
-  const y = 100 + Math.ceil(Math.random() * 200);
+  const x = Random.integerRange(
+    POSITION_SQUARE_OFFSET,
+    POSITION_SQUARE_OFFSET + POSITION_SQUARE_SIZE
+  );
+  const y = Random.integerRange(
+    POSITION_SQUARE_OFFSET,
+    POSITION_SQUARE_OFFSET + POSITION_SQUARE_SIZE
+  );
   obj.setPosition(x, y);
-  obj.setSize("20px", "20px");
 }
 
-Game.start();
-setTimeout(() => Game.stop(), 5000);
+Game.startTime();
+setTimeout(() => Game.stopTime(), 5000);
