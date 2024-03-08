@@ -3,6 +3,7 @@ import "./styles/main.scss";
 import Game from "./types/Game";
 import GameObject from "./types/GameObject";
 import Reactive from "./types/Reactive";
+import { Vector3d } from "./types/Vector";
 import Random from "./utils/Random";
 
 const STEP_SIZE = 10;
@@ -12,9 +13,8 @@ const POSITION_SQUARE_OFFSET = 100;
 class Test extends GameObject {
   value: number;
   constructor(value: number) {
-    super({ initialize: false });
+    super();
     this.value = value;
-    this.init();
   }
 
   process(delta: number): void {
@@ -23,8 +23,9 @@ class Test extends GameObject {
 
     const vertical = Random.integerRange(-STEP_SIZE, STEP_SIZE);
     const horizontal = Random.integerRange(-STEP_SIZE, STEP_SIZE);
-    this.y.value! += vertical;
-    this.x.value! += horizontal;
+    const position = this.transform.position
+    position.setY(position.y + vertical) ;
+    position.setX(position.x + horizontal);
   }
 
   render() {
@@ -48,7 +49,7 @@ for (let i = 0; i < amount.value; i++) {
     POSITION_SQUARE_OFFSET,
     POSITION_SQUARE_OFFSET + POSITION_SQUARE_SIZE
   );
-  obj.setPosition(x, y);
+  obj.transform.setPosition(new Vector3d(x, y));
 }
 
 Game.startTime();

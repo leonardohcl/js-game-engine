@@ -8,7 +8,7 @@ export default class Reactive<T = any> {
     },
     {
       set(target, prop, newValue) {
-        if (prop === "value") {
+        if (!prop || prop === "value") {
           if (newValue != target.value) {
             const old = target.value;
             target.value = newValue;

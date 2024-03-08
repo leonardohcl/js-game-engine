@@ -1,18 +1,16 @@
 import ObjectManager from "./ObjectManager";
-import Reactive from "./Reactive";
+import Transform from "./Transform";
 
 export default class GameObject {
-  x = new Reactive<number>(0);
-  y = new Reactive<number>(0);
+  private _transform: Transform;
+
   private tag: string;
-  private isRenderUpdated = false;
   private classname?: string;
   private _element!: HTMLElement;
 
   constructor({
     tag = "div",
     classname,
-    initialize = true,
   }: {
     tag?: string;
     classname?: string;
@@ -20,40 +18,29 @@ export default class GameObject {
   } = {}) {
     this.tag = tag;
     this.classname = classname;
-    if (initialize) this.init();
-  }
-
-  init() {
     this._element = this.render();
+    this._transform = new Transform()
     this.updateRender();
-
-    this.x.subscribe(() => this.setRenderUpdated());
-    this.y.subscribe(() => this.setRenderUpdated());
 
     ObjectManager.addObject(this);
   }
 
-  private setRenderUpdated(value = true) {
-    this.isRenderUpdated = value;
+  get transform() {
+    return this._transform;
   }
 
   get element() {
     return this._element;
   }
 
-  get transform() {
-    return `translate(${this.x.value}px, ${this.y.value}px)`;
+  get CSSTransform() {
+    return `translate(${this.transform.position.x}px, ${this.transform.position.y}px)`;
   }
 
   get style() {
     return {
-      transform: this.transform,
+      transform: this.CSSTransform,
     };
-  }
-
-  setPosition(x: number, y: number) {
-    this.x.value = x;
-    this.y.value = y;
   }
 
   private updateRender() {
@@ -64,7 +51,6 @@ export default class GameObject {
       })
       .join("");
     this._element.style.cssText = css;
-    this.setRenderUpdated(false);
   }
 
   protected render() {
@@ -75,6 +61,6 @@ export default class GameObject {
   }
 
   process(_: number) {
-    if (this.isRenderUpdated) this.updateRender();
+    this.updateRender();
   }
 }
