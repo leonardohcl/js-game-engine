@@ -6,52 +6,54 @@ import Random from "./utils/Random";
 import { Rectangle } from "./types/Shape";
 import Rect2d from "./utils/Rect";
 import Renderer from "./types/Renderer";
+import StaticBody from "./types/StaticBody";
 
-class Square extends Rectangle {
+class Square extends StaticBody {
   private side: number;
-  private speed = 0.2;
-  private dir: Vector2d;
+  private rect: Rectangle;
 
-  constructor(side = 10) {
-    super(0, 0, side, side, "rgba(0,0,0,0.6)");
+  constructor(side = 10, velocity = Random.point(STEP_RECT) as Vector3d) {
+    super(velocity);
+    this.rect = new Rectangle(0, 0, side, side, "rgba(0,0,0,0.6)");
     this.side = side;
-    this.dir = Random.point(STEP_RECT);
   }
 
   private get centerPad() {
     return this.side * 0.5;
   }
 
-  process(deltaTime: number): void {
-    let newPosition = this.getNextPosition(deltaTime);
-    let changedDir = false;
-    if (
-      newPosition.x <= this.centerPad ||
-      newPosition.x >= Renderer.width - this.centerPad
-    ) {
-      changedDir = true;
-      this.dir.setX(-this.dir.x);
-    }
-    if (
-      newPosition.y <= this.centerPad ||
-      newPosition.y >= Renderer.height - this.centerPad
-    ) {
-      changedDir = true;
-      this.dir.setY(-this.dir.y);
-    }
-
-    if (changedDir) newPosition = this.getNextPosition(deltaTime)
-    this.setPosition(newPosition as Vector3d);
+  private get limitX() {
+    return Renderer.width - this.centerPad;
   }
 
-  getNextPosition(deltaTime: number) {
-    return new Vector2d(
-      this.position.x + this.dir.x * this.speed * deltaTime,
-      this.position.y + this.dir.y * this.speed * deltaTime
-    );
+  private get limitY() {
+    return Renderer.height - this.centerPad;
+  }
+
+  process(deltaTime: number): void {
+    super.process(deltaTime);
+    if (this.position.x < this.centerPad) {
+      this.position.setX(this.centerPad);
+      this.velocity.setX(-this.velocity.x);
+    } else if (this.position.x >= this.limitX) {
+      this.position.setX(this.limitX);
+      this.velocity.setX(-this.velocity.x);
+    }
+    if (this.position.y < this.centerPad) {
+      this.velocity.setY(-this.velocity.y)
+      this.position.setY(this.centerPad);
+    } else if (this.position.y >= this.limitY) {
+      this.position.setY(this.limitY);
+      this.velocity.setY(-this.velocity.y)
+    }
+    this.rect.setPosition(this.position);
+  }
+
+  draw() {
+    this.rect.draw();
   }
 }
-const STEP_SIZE = 1;
+const STEP_SIZE = 0.2;
 const STEP_RECT = new Rect2d(
   new Vector2d(-STEP_SIZE, -STEP_SIZE),
   new Vector2d(STEP_SIZE, STEP_SIZE)

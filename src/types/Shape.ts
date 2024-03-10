@@ -1,18 +1,17 @@
 import Rect2d from "../utils/Rect";
 import { Vector2d, Vector3d } from "../utils/Vector";
-import GameObject from "./GameObject";
 import Renderer from "./Renderer";
+import VisualComponent from "./VisualComponent";
 
 interface IShape {
-  position: Vector2d;
   area: number;
   draw: () => void;
   setPosition: (position: Vector3d) => void;
-  moveTo: (position: Vector2d) => void;
 }
 
-export class Shape extends GameObject implements IShape {
-  moveTo(_: Vector2d) {}
+export class Shape extends VisualComponent implements IShape {
+  setPosition(_: Vector3d) {}
+  draw() {}
   get area() {
     return 0;
   }
@@ -62,6 +61,5 @@ export class Rectangle extends Shape {
       position.y - halfHeight
     );
     this._rect.moveTo(newPosition);
-    super.setPosition(newPosition as Vector3d)
   }
 }
