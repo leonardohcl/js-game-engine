@@ -7,7 +7,7 @@ export default class Rect2d extends Shape2d {
   _end: Vector2d;
 
   constructor(start: Vector2d, end: Vector2d, color?: string) {
-    const pad = end.copy()
+    const pad = end.clone()
     pad.subtract(start)
     pad.multiply(-1)
     super(start.x + pad.x, start.y + pad.y, 0, color);
@@ -53,10 +53,10 @@ export default class Rect2d extends Shape2d {
   }
 
   place(position: Vector3d) {
-    const start = position.copy()
+    const start = position.clone()
     start.subtract(this.centerPad)
 
-    const end = start.copy()
+    const end = start.clone()
     end.add(new Vector3d(this.width, this.height, 0));
     
     this._start = start;

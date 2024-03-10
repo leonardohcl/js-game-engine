@@ -15,9 +15,9 @@ export default class StaticBody extends PhysicsBody {
 
   process(deltaTime: number): void {
     super.process(deltaTime);
-    const movement = this.velocity.copy()
+    const movement = this.velocity.clone()
     movement.multiply(deltaTime)
-    const position = this.position.copy()
+    const position = this.position.clone()
     position.add(movement)
     this.setPosition(position);
   }

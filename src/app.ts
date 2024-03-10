@@ -11,6 +11,7 @@ const randomColorChannel = () => Random.integerRange(50, 240);
 
 class Square extends StaticBody {
   private shape: Rect2d;
+  slowRate = 0.75;
 
   constructor(side = 10, velocity = Random.point(STEP_RECT) as Vector3d) {
     super(velocity);
@@ -30,30 +31,29 @@ class Square extends StaticBody {
 
   process(deltaTime: number): void {
     super.process(deltaTime);
-    const position = this.position.copy();
-    const redirect = [1, 1, 1];
+    const position = this.position.clone();
+    const redirect = new Vector3d(1, 1, 1);
     const replace = this.position.coords;
-    position.vectorOperation(position, (idx) => {
-      const value = position.coords[idx];
+    position.coords.forEach((value, idx) => {
       if (value <= this.shape.centerPad.coords[idx]) {
-        redirect[idx] = -1;
+        redirect.coords[idx] = -this.slowRate;
         replace[idx] = this.shape.centerPad.coords[idx];
       } else if (value >= this.limit.coords[idx]) {
-        redirect[idx] = -1;
+        redirect.coords[idx] = -this.slowRate;
         replace[idx] = this.limit.coords[idx];
       } 
     });
 
     this.velocity.multiply(redirect);
     this.setPosition(new Vector3d(...replace));
-    this.shape.place(this.position);
   }
 
   draw() {
+    this.shape.place(this.position);
     this.shape.draw();
   }
 }
-const STEP_SIZE = 0.2;
+const STEP_SIZE = 1;
 const STEP_RECT = new Rect2d(
   new Vector2d(-STEP_SIZE, -STEP_SIZE),
   new Vector2d(STEP_SIZE, STEP_SIZE)
@@ -69,12 +69,15 @@ const area = new Rect2d(
   )
 );
 
-const amount = 1;
+const amount = 100;
 
-for (let i = 0; i < amount; i++) {
-  const obj = new Square(100);
+const spawnBall = () => {
+  const obj = new Square(10);
   const position = Random.point(area);
   obj.setPosition(position as Vector3d);
+}
+for (let i = 0; i < amount; i++) {
+ spawnBall()
 }
 
 Game.start();
