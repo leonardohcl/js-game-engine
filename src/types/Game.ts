@@ -1,21 +1,17 @@
 import GameObject from "./GameObject";
 import ObjectManager from "./ObjectManager";
+import Renderer from "./Renderer";
 import TimeEngine from "./TimeEngine";
 
 export default class Game {
-  private static isBooted = false;
-  static boot() {
-    if (Game.isBooted) return;
-    Game.isBooted = true;
-    ObjectManager.boot();
-    document.body.appendChild(ObjectManager.wrapper);
-  }
+  private constructor() {}
 
-  static startTime() {
+  static start() {
+    Renderer.boot()
     TimeEngine.start();
   }
 
-  static stopTime() {
+  static stop() {
     TimeEngine.stop();
   }
 
@@ -23,5 +19,3 @@ export default class Game {
     ObjectManager.addObject(obj);
   }
 }
-
-Game.boot();

@@ -1,4 +1,4 @@
-import { Vector3d } from "./Vector";
+import { Vector3d } from "../utils/Vector";
 
 export default class Transform {
   private _position: Vector3d;

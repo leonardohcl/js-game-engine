@@ -1,4 +1,5 @@
 import ObjectManager from "./ObjectManager";
+import Renderer from "./Renderer";
 
 export default class TimeEngine {
   private static lastTimestamp: number = 0;
@@ -34,9 +35,10 @@ export default class TimeEngine {
       this.frameTimeCooldown = this.frameTime - this.frameTimeCooldown;
       ObjectManager.objects.forEach((obj) => {
         obj.process(this.deltaTime);
-        obj.updateRender();
       });
     }
+
+    window.requestAnimationFrame(() => Renderer.render())
 
     setTimeout(() => this.process(), this.processMillisecondsDelay);
   }

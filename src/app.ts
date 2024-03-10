@@ -1,56 +1,79 @@
 import "./styles/main.scss";
 
 import Game from "./types/Game";
-import GameObject from "./types/GameObject";
-import Reactive from "./types/Reactive";
-import { Vector3d } from "./types/Vector";
+import { Vector2d, Vector3d } from "./utils/Vector";
 import Random from "./utils/Random";
+import { Rectangle } from "./types/Shape";
+import Rect2d from "./utils/Rect";
+import Renderer from "./types/Renderer";
 
-const STEP_SIZE = 10;
+class Square extends Rectangle {
+  private side: number;
+  private speed = 0.2;
+  private dir: Vector2d;
+
+  constructor(side = 10) {
+    super(0, 0, side, side, "rgba(0,0,0,0.6)");
+    this.side = side;
+    this.dir = Random.point(STEP_RECT);
+  }
+
+  private get centerPad() {
+    return this.side * 0.5;
+  }
+
+  process(deltaTime: number): void {
+    let newPosition = this.getNextPosition(deltaTime);
+    let changedDir = false;
+    if (
+      newPosition.x <= this.centerPad ||
+      newPosition.x >= Renderer.width - this.centerPad
+    ) {
+      changedDir = true;
+      this.dir.setX(-this.dir.x);
+    }
+    if (
+      newPosition.y <= this.centerPad ||
+      newPosition.y >= Renderer.height - this.centerPad
+    ) {
+      changedDir = true;
+      this.dir.setY(-this.dir.y);
+    }
+
+    if (changedDir) newPosition = this.getNextPosition(deltaTime)
+    this.setPosition(newPosition as Vector3d);
+  }
+
+  getNextPosition(deltaTime: number) {
+    return new Vector2d(
+      this.position.x + this.dir.x * this.speed * deltaTime,
+      this.position.y + this.dir.y * this.speed * deltaTime
+    );
+  }
+}
+const STEP_SIZE = 1;
+const STEP_RECT = new Rect2d(
+  new Vector2d(-STEP_SIZE, -STEP_SIZE),
+  new Vector2d(STEP_SIZE, STEP_SIZE)
+);
 const POSITION_SQUARE_SIZE = 500;
 const POSITION_SQUARE_OFFSET = 100;
 
-class Test extends GameObject {
-  value: number;
-  constructor(value: number) {
-    super();
-    this.value = value;
-  }
+const area = new Rect2d(
+  new Vector2d(POSITION_SQUARE_OFFSET, POSITION_SQUARE_OFFSET),
+  new Vector2d(
+    POSITION_SQUARE_OFFSET + POSITION_SQUARE_SIZE,
+    POSITION_SQUARE_OFFSET + POSITION_SQUARE_SIZE
+  )
+);
 
-  process(delta: number): void {
-    super.process(delta);
-    if (Random.number() < 0.9) return;
+const amount = 100;
 
-    const vertical = Random.integerRange(-STEP_SIZE, STEP_SIZE);
-    const horizontal = Random.integerRange(-STEP_SIZE, STEP_SIZE);
-    const position = this.transform.position
-    position.setY(position.y + vertical) ;
-    position.setX(position.x + horizontal);
-  }
-
-  render() {
-    const el = super.render();
-    el.classList.add("test-object");
-    // el.innerHTML = this.value?.toString();
-    return el;
-  }
+for (let i = 0; i < amount; i++) {
+  const obj = new Square(25);
+  const position = Random.point(area);
+  obj.setPosition(position as Vector3d);
 }
 
-const amount: Reactive<number> = new Reactive<number>();
-amount.value = 100;
-
-for (let i = 0; i < amount.value; i++) {
-  const obj = new Test(i);
-  const x = Random.integerRange(
-    POSITION_SQUARE_OFFSET,
-    POSITION_SQUARE_OFFSET + POSITION_SQUARE_SIZE
-  );
-  const y = Random.integerRange(
-    POSITION_SQUARE_OFFSET,
-    POSITION_SQUARE_OFFSET + POSITION_SQUARE_SIZE
-  );
-  obj.transform.setPosition(new Vector3d(x, y));
-}
-
-Game.startTime();
-setTimeout(() => Game.stopTime(), 5000);
+Game.start();
+// setTimeout(() => Game.stop(), 5000);
