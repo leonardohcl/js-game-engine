@@ -1,21 +1,12 @@
 import { Vector3d } from "../Vector";
 
-export interface IShape {
-  color: string;
-  area: number;
-  draw: () => void;
-  place: (position: Vector3d) => void;
-  contains: (point: Vector3d) => boolean;
-  intercepts: (shape: Shape) => boolean;
-}
-
-export default class Shape implements IShape {
+export default class Shape {
   color: string;
   protected _position: Vector3d;
 
-  constructor(x = 0, y = 0, z = 0, color = "white") {
+  constructor(position: Vector3d, color = "white") {
     this.color = color;
-    this._position = new Vector3d(x, y, z);
+    this._position = position;
   }
 
   get position() {
@@ -29,9 +20,14 @@ export default class Shape implements IShape {
   contains(point: Vector3d) {
     return this.position.equals(point);
   }
-  intercepts(shape: Shape) {
+  intersects(shape: Shape) {
     return this.contains(shape.position);
   }
+  
+  get boundingPoints() {
+    return [this.position]
+  }
+
   get area() {
     return 0;
   }

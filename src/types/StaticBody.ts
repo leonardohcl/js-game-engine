@@ -1,24 +1,15 @@
 import { Vector3d } from "../utils/Vector";
+import GameObject from "./GameObject";
 import PhysicsBody from "./PhysicsBody";
 
 export default class StaticBody extends PhysicsBody {
-  private _velocity: Vector3d;
-
-  constructor(velocity = new Vector3d()) {
-    super();
-    this._velocity = velocity;
+  constructor(position: Vector3d, velocity: Vector3d) {
+    super(position, velocity);
   }
 
-  get velocity() {
-    return this._velocity;
+  processPhysics(deltaTime: number): void {
+    super.processPhysics(deltaTime);
   }
 
-  process(deltaTime: number): void {
-    super.process(deltaTime);
-    const movement = this.velocity.clone()
-    movement.multiply(deltaTime)
-    const position = this.position.clone()
-    position.add(movement)
-    this.setPosition(position);
-  }
+  onCollision(_: GameObject) {}
 }

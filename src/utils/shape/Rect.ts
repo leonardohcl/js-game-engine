@@ -1,17 +1,27 @@
-import Shape2d from ".";
+import Shape from ".";
 import Renderer from "../../types/Renderer";
 import { Vector2d, Vector3d } from "../Vector";
 
-export default class Rect2d extends Shape2d {
+export default class Rect2d extends Shape {
   _start: Vector2d;
   _end: Vector2d;
 
-  constructor(start: Vector2d, end: Vector2d, color?: string) {
-    const pad = end.clone()
-    pad.subtract(start)
-    pad.multiply(-1)
-    super(start.x + pad.x, start.y + pad.y, 0, color);
+  constructor(
+    position: Vector3d,
+    width: number,
+    height: number,
+    color: string = "white",
+    pivot: "center" | "top-left" = "center"
+  ) {
+    super(position, color);
+    const start = position.clone();
+    if (pivot === "center") {
+      const pad = new Vector2d(width / 2, height / 2);
+      start.subtract(pad);
+    }
     this._start = start;
+    const end = start.clone();
+    end.add(new Vector2d(width, height));
     this._end = end;
   }
 
@@ -39,12 +49,12 @@ export default class Rect2d extends Shape2d {
     return this.width * this.height;
   }
 
-  get corners() {
+  get boundingPoints() {
     return [
-      this.start,
-      new Vector2d(this.start.x, this.start.y + this.height),
-      new Vector2d(this.start.x + this.width, this.start.y),
-      this.end,
+      new Vector3d(this.start.x, this.start.y),
+      new Vector3d(this.start.x, this.start.y + this.height),
+      new Vector3d(this.start.x + this.width, this.start.y),
+      new Vector3d(this.end.x, this.end.y),
     ];
   }
 
@@ -53,26 +63,24 @@ export default class Rect2d extends Shape2d {
   }
 
   place(position: Vector3d) {
-    const start = position.clone()
-    start.subtract(this.centerPad)
+    const start = position.clone();
+    start.subtract(this.centerPad);
 
-    const end = start.clone()
+    const end = start.clone();
     end.add(new Vector3d(this.width, this.height, 0));
-    
+
     this._start = start;
     this._end = end;
   }
 
   contains(point: Vector2d) {
-    return point.coords.every(
-      (idx) =>
-        point.coords[idx] >= this.start.coords[idx] &&
-        point.coords[idx] <= this.end.coords[idx]
-    );
+    return point.coords.every((value, idx) => {
+      return value >= this.start.coords[idx] && value <= this.end.coords[idx];
+    });
   }
 
-  intercepts(_: Shape2d) {
-    return false;
+  intersects(shape: Shape) {
+    return shape.boundingPoints.some((point) => this.contains(point));
   }
 
   draw() {

@@ -5,9 +5,8 @@ import Transform from "./Transform";
 export default class GameObject {
   private _transform: Transform;
 
-  constructor() {
-    this._transform = new Transform();
-
+  constructor(position: Vector3d) {
+    this._transform = new Transform(position);
     ObjectManager.addObject(this);
   }
 
@@ -20,6 +19,5 @@ export default class GameObject {
   }
 
   process(_: number) {}
-  physicsProcess(_: number) {}
   draw() {}
 }

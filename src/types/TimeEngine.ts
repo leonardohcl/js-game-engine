@@ -1,4 +1,6 @@
+import CollisionManager from "./CollisionManager";
 import ObjectManager from "./ObjectManager";
+import PhysicsBody from "./PhysicsBody";
 import Renderer from "./Renderer";
 
 export default class TimeEngine {
@@ -33,13 +35,14 @@ export default class TimeEngine {
 
     if (!isOnFrameCooldown) {
       this.frameTimeCooldown = this.frameTime - this.frameTimeCooldown;
+      CollisionManager.calculateCollisions()
       ObjectManager.objects.forEach((obj) => {
         obj.process(this.deltaTime);
-        obj.physicsProcess(this.deltaTime);
+        if (obj instanceof PhysicsBody) obj.processPhysics(this.deltaTime);
       });
     }
 
-    window.requestAnimationFrame(() => Renderer.render())
+    window.requestAnimationFrame(() => Renderer.render());
 
     setTimeout(() => this.process(), this.processMillisecondsDelay);
   }
