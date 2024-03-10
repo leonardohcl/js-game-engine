@@ -1,4 +1,4 @@
-import Rect2d from "./Rect";
+import Rect2d from "./shape/Rect";
 import { Vector2d } from "./Vector";
 
 export default class Random {

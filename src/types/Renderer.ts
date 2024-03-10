@@ -1,4 +1,4 @@
-import Rect2d from "../utils/Rect";
+import Rect2d from "../utils/shape/Rect";
 import { Vector2d } from "../utils/Vector";
 import Viewport from "../utils/Viewport";
 import ObjectManager from "./ObjectManager";
@@ -42,7 +42,7 @@ export default class Renderer {
   }
 
   static get viewport() {
-    return new Rect2d(Vector2d.ZERO, new Vector2d(this.width, this.height));
+    return new Rect2d(new Vector2d(), new Vector2d(this.width, this.height));
   }
 
   private static get ctx() {

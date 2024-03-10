@@ -35,6 +35,7 @@ export default class TimeEngine {
       this.frameTimeCooldown = this.frameTime - this.frameTimeCooldown;
       ObjectManager.objects.forEach((obj) => {
         obj.process(this.deltaTime);
+        obj.physicsProcess(this.deltaTime);
       });
     }
 

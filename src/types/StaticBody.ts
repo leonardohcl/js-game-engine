@@ -4,7 +4,7 @@ import PhysicsBody from "./PhysicsBody";
 export default class StaticBody extends PhysicsBody {
   private _velocity: Vector3d;
 
-  constructor(velocity = Vector3d.ZERO) {
+  constructor(velocity = new Vector3d()) {
     super();
     this._velocity = velocity;
   }
@@ -15,11 +15,10 @@ export default class StaticBody extends PhysicsBody {
 
   process(deltaTime: number): void {
     super.process(deltaTime);
-    const nextPosition = new Vector3d(
-      this.position.x + this.velocity.x * deltaTime,
-      this.position.y + this.velocity.y * deltaTime,
-      this.position.z + this.velocity.z * deltaTime
-    );
-    this.setPosition(nextPosition as Vector3d);
+    const movement = this.velocity.copy()
+    movement.multiply(deltaTime)
+    const position = this.position.copy()
+    position.add(movement)
+    this.setPosition(position);
   }
 }

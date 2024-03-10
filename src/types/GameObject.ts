@@ -20,5 +20,6 @@ export default class GameObject {
   }
 
   process(_: number) {}
+  physicsProcess(_: number) {}
   draw() {}
 }

@@ -13,8 +13,6 @@ export default class Transform {
   }
 
   setPosition(pos: Vector3d) {
-    this.position.setX(pos.x);
-    this.position.setY(pos.y);
-    this.position.setZ(pos.z);
+    this.position.assign(pos)
   }
 }

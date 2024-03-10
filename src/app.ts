@@ -3,54 +3,54 @@ import "./styles/main.scss";
 import Game from "./types/Game";
 import { Vector2d, Vector3d } from "./utils/Vector";
 import Random from "./utils/Random";
-import { Rectangle } from "./types/Shape";
-import Rect2d from "./utils/Rect";
+import Rect2d from "./utils/shape/Rect";
 import Renderer from "./types/Renderer";
 import StaticBody from "./types/StaticBody";
 
+const randomColorChannel = () => Random.integerRange(50, 240);
+
 class Square extends StaticBody {
-  private side: number;
-  private rect: Rectangle;
+  private shape: Rect2d;
 
   constructor(side = 10, velocity = Random.point(STEP_RECT) as Vector3d) {
     super(velocity);
-    this.rect = new Rectangle(0, 0, side, side, "rgba(0,0,0,0.6)");
-    this.side = side;
+    const color = `rgba(${randomColorChannel()},${randomColorChannel()},${randomColorChannel()},${Random.range(
+      0.5,
+      1
+    )})`;
+    this.shape = new Rect2d(new Vector2d(), new Vector2d(side, side), color);
   }
 
-  private get centerPad() {
-    return this.side * 0.5;
-  }
-
-  private get limitX() {
-    return Renderer.width - this.centerPad;
-  }
-
-  private get limitY() {
-    return Renderer.height - this.centerPad;
+  private get limit() {
+    return new Vector2d(
+      Renderer.width - this.shape.centerPad.x,
+      Renderer.height - this.shape.centerPad.y
+    );
   }
 
   process(deltaTime: number): void {
     super.process(deltaTime);
-    if (this.position.x < this.centerPad) {
-      this.position.setX(this.centerPad);
-      this.velocity.setX(-this.velocity.x);
-    } else if (this.position.x >= this.limitX) {
-      this.position.setX(this.limitX);
-      this.velocity.setX(-this.velocity.x);
-    }
-    if (this.position.y < this.centerPad) {
-      this.velocity.setY(-this.velocity.y)
-      this.position.setY(this.centerPad);
-    } else if (this.position.y >= this.limitY) {
-      this.position.setY(this.limitY);
-      this.velocity.setY(-this.velocity.y)
-    }
-    this.rect.setPosition(this.position);
+    const position = this.position.copy();
+    const redirect = [1, 1, 1];
+    const replace = this.position.coords;
+    position.vectorOperation(position, (idx) => {
+      const value = position.coords[idx];
+      if (value <= this.shape.centerPad.coords[idx]) {
+        redirect[idx] = -1;
+        replace[idx] = this.shape.centerPad.coords[idx];
+      } else if (value >= this.limit.coords[idx]) {
+        redirect[idx] = -1;
+        replace[idx] = this.limit.coords[idx];
+      } 
+    });
+
+    this.velocity.multiply(redirect);
+    this.setPosition(new Vector3d(...replace));
+    this.shape.place(this.position);
   }
 
   draw() {
-    this.rect.draw();
+    this.shape.draw();
   }
 }
 const STEP_SIZE = 0.2;
@@ -69,13 +69,13 @@ const area = new Rect2d(
   )
 );
 
-const amount = 100;
+const amount = 1;
 
 for (let i = 0; i < amount; i++) {
-  const obj = new Square(25);
+  const obj = new Square(100);
   const position = Random.point(area);
   obj.setPosition(position as Vector3d);
 }
 
 Game.start();
-// setTimeout(() => Game.stop(), 5000);
+// setTimeout(() => Game.stop(), 50);
