@@ -1,28 +1,33 @@
-import CollisionShape from "../physics/CollisionShape";
+import { Vector2d } from "../../utils/Vector";
+import Rect2d from "../../utils/shape/Rect2d";
+import QuadTree from "../../utils/trees/QuadTree";
+import PhysicsBody from "../physics/PhysicsBody";
+import ObjectManager from "./ObjectManager";
+import Renderer from "./Renderer";
 
 export default class CollisionManager {
-  static objects: CollisionShape[] = [];
-
   private constructor() {}
 
-  static addShape(obj: CollisionShape) {
-    CollisionManager.objects.push(obj);
-  }
-
   static calculateCollisions() {
-    for (let i = 0; i < CollisionManager.objects.length; i++) {
-      const obj1 = CollisionManager.objects[i];
-      for (let j = i + 1; j < CollisionManager.objects.length; j++) {
-        const obj2 = CollisionManager.objects[j];
-        if (obj1.shape.intersects(obj2.shape)) {
-          if (obj2.parent) {
-            obj1.parent?.onCollision(obj2.parent);
-          }
-          if (obj1.parent) {
-            obj2.parent?.onCollision(obj1.parent);
-          }
-        }
-      }
-    }
+    const qTree = new QuadTree<PhysicsBody>(
+      new Rect2d(
+        new Vector2d(),
+        Renderer.width,
+        Renderer.height,
+        new Vector2d()
+      )
+    );
+
+    ObjectManager.objects.forEach((obj) => {
+      if (obj instanceof PhysicsBody) qTree.insert(obj);
+    });
+
+    qTree.list().forEach((obj) => {
+      const colliding = qTree.search(obj.collider!);
+      colliding.forEach((collisionEntity) => {
+        if (collisionEntity === obj) return;
+        collisionEntity.onCollision(obj, obj.velocity);
+      });
+    });
   }
 }

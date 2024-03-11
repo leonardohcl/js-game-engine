@@ -1,10 +1,10 @@
 import { Vector3d } from "../../utils/Vector";
-import CollisionShape from "./CollisionShape";
+import Rect2d from "../../utils/shape/Rect2d";
 import GameObject from "../GameObject";
 
 export default class PhysicsBody extends GameObject {
   protected _mass = 1;
-  protected _collisionShape?: CollisionShape;
+  protected _collider?: Rect2d;
   protected _velocity: Vector3d;
 
   constructor(position: Vector3d, velocity: Vector3d) {
@@ -20,15 +20,8 @@ export default class PhysicsBody extends GameObject {
     return this._velocity;
   }
 
-  set collisionShape(value) {
-    this._collisionShape = value;
-    if (value) {
-      value.parent = this;
-    }
-  }
-
-  get collisionShape() {
-    return this._collisionShape;
+  get collider(){
+    return this._collider;
   }
 
   processPhysics(deltaTime: number) {
@@ -39,5 +32,5 @@ export default class PhysicsBody extends GameObject {
     this.setPosition(position);
   }
 
-  onCollision(_: GameObject) {}
+  onCollision(obj: PhysicsBody, force:Vector3d) {}
 }

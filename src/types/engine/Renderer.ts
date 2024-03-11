@@ -1,5 +1,4 @@
-import Rect2d from "../../utils/shape/Rect";
-import { Vector3d } from "../../utils/Vector";
+import Rect2d from "../../utils/shape/Rect2d";
 import Viewport from "../../utils/Viewport";
 import ObjectManager from "./ObjectManager";
 
@@ -41,16 +40,6 @@ export default class Renderer {
     return this._height;
   }
 
-  static get viewport() {
-    return new Rect2d(
-      new Vector3d(),
-      this.width,
-      this.height,
-      "white",
-      "top-left"
-    );
-  }
-
   private static get ctx() {
     return Renderer._wrapper.getContext("2d")!;
   }
@@ -76,6 +65,14 @@ export default class Renderer {
     this.ctx.save();
     this.ctx.fillStyle = color;
     this.ctx.fillRect(area.start.x, area.start.y, area.width, area.height);
+    this.ctx.restore();
+  }
+
+  static strokeArea(color: string, width: number,  area: Rect2d) {
+    this.ctx.save();
+    this.ctx.strokeStyle = color;
+    this.ctx.lineWidth = width;
+    this.ctx.strokeRect(area.start.x, area.start.y, area.width, area.height);
     this.ctx.restore();
   }
 }

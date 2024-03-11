@@ -35,14 +35,13 @@ export default class TimeEngine {
 
     if (!isOnFrameCooldown) {
       this.frameTimeCooldown = this.frameTime - this.frameTimeCooldown;
-      CollisionManager.calculateCollisions()
       ObjectManager.objects.forEach((obj) => {
         obj.process(this.deltaTime);
         if (obj instanceof PhysicsBody) obj.processPhysics(this.deltaTime);
-      });
+      });      
+      CollisionManager.calculateCollisions()
+      window.requestAnimationFrame(() => Renderer.render());
     }
-
-    window.requestAnimationFrame(() => Renderer.render());
 
     setTimeout(() => this.process(), this.processMillisecondsDelay);
   }

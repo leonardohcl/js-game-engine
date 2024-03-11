@@ -1,5 +1,4 @@
 import { Vector3d } from "../../utils/Vector";
-import GameObject from "../GameObject";
 import PhysicsBody from "./PhysicsBody";
 
 export default class StaticBody extends PhysicsBody {
@@ -11,5 +10,5 @@ export default class StaticBody extends PhysicsBody {
     super.processPhysics(deltaTime);
   }
 
-  onCollision(_: GameObject) {}
+  onCollision(obj: PhysicsBody, force: Vector3d) {}
 }
