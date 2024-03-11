@@ -1,6 +1,6 @@
 import CollisionManager from "./CollisionManager";
 import ObjectManager from "./ObjectManager";
-import PhysicsBody from "./PhysicsBody";
+import PhysicsBody from "../physics/PhysicsBody";
 import Renderer from "./Renderer";
 
 export default class TimeEngine {

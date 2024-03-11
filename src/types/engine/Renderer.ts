@@ -1,6 +1,6 @@
-import Rect2d from "../utils/shape/Rect";
-import { Vector3d } from "../utils/Vector";
-import Viewport from "../utils/Viewport";
+import Rect2d from "../../utils/shape/Rect";
+import { Vector3d } from "../../utils/Vector";
+import Viewport from "../../utils/Viewport";
 import ObjectManager from "./ObjectManager";
 
 export default class Renderer {

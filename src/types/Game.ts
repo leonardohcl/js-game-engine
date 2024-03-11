@@ -1,7 +1,7 @@
 import GameObject from "./GameObject";
-import ObjectManager from "./ObjectManager";
-import Renderer from "./Renderer";
-import TimeEngine from "./TimeEngine";
+import ObjectManager from "./engine/ObjectManager";
+import Renderer from "./engine/Renderer";
+import TimeEngine from "./engine/TimeEngine";
 
 export default class Game {
   private constructor() {}

@@ -1,5 +1,5 @@
 import { Vector3d } from "../utils/Vector";
-import ObjectManager from "./ObjectManager";
+import ObjectManager from "./engine/ObjectManager";
 import Transform from "./Transform";
 
 export default class GameObject {

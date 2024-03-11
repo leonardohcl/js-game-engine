@@ -1,5 +1,5 @@
-import Shape from "../utils/shape/Shape";
-import CollisionManager from "./CollisionManager";
+import Shape from "../../utils/shape/Shape";
+import CollisionManager from "../engine/CollisionManager";
 import PhysicsBody from "./PhysicsBody";
 
 export default class CollisionShape {

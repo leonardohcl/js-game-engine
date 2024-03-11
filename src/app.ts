@@ -4,9 +4,9 @@ import Game from "./types/Game";
 import { Vector2d, Vector3d } from "./utils/Vector";
 import Random from "./utils/Random";
 import Rect2d from "./utils/shape/Rect";
-import Renderer from "./types/Renderer";
-import StaticBody from "./types/StaticBody";
-import CollisionShape from "./types/CollisionShape";
+import Renderer from "./types/engine/Renderer";
+import StaticBody from "./types/physics/StaticBody";
+import CollisionShape from "./types/physics/CollisionShape";
 
 const randomColorChannel = () => Random.integerRange(50, 240);
 

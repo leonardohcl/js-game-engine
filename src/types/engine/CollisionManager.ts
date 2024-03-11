@@ -1,4 +1,4 @@
-import CollisionShape from "./CollisionShape";
+import CollisionShape from "../physics/CollisionShape";
 
 export default class CollisionManager {
   static objects: CollisionShape[] = [];

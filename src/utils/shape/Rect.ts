@@ -1,5 +1,5 @@
 import Shape from ".";
-import Renderer from "../../types/Renderer";
+import Renderer from "../../types/engine/Renderer";
 import { Vector2d, Vector3d } from "../Vector";
 
 export default class Rect2d extends Shape {

@@ -1,6 +1,6 @@
-import { Vector3d } from "../utils/Vector";
+import { Vector3d } from "../../utils/Vector";
 import CollisionShape from "./CollisionShape";
-import GameObject from "./GameObject";
+import GameObject from "../GameObject";
 
 export default class PhysicsBody extends GameObject {
   protected _mass = 1;
